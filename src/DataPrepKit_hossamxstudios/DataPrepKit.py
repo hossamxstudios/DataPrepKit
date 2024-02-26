@@ -28,13 +28,13 @@ def handle_missing_values(data):
         print("\nWhat would you like to do with missing values?")
         print("1. Remove rows with missing values")
         print("2. Fill in missing values")
-        print("3. Skip this step")
         
         choice = input("Enter the number of your choice: ").strip()
         
         if choice == '1':
             data_cleaned = data.dropna()
             print("Done! I've removed the rows with missing values from your data.")
+            print(data_cleaned)
             return data_cleaned
         elif choice == '2':
             while True:
@@ -44,7 +44,6 @@ def handle_missing_values(data):
                 print("3. Fill numeric columns with the mode")
                 print("4. Fill text columns with the most frequent value")
                 print("5. Fill text columns with a constant value")
-                print("6. Go back to the main menu")
                 impute_choice = input("Enter the number of your choice: ").strip()
                 if impute_choice == '1':
                     numeric_strategy = 'mean'
@@ -62,10 +61,8 @@ def handle_missing_values(data):
                     text_strategy = 'constant'
                     constant_value = input("Please enter the constant value for filling text columns: ").strip()
                     break
-                elif impute_choice == '6':
-                    return data
                 else:
-                    print("Oops! That's an invalid choice. Please enter a number from 1 to 6.")
+                    print("Oops! That's an invalid choice. Please enter a number from 1 to 5.")
 
             data_cleaned = data.copy()
             if 'numeric_strategy' in locals():
@@ -76,17 +73,15 @@ def handle_missing_values(data):
                 elif text_strategy == 'constant':
                     data_cleaned = data_cleaned.fillna(constant_value)
             print("Done! I've filled in the missing values in your data.")
+            print(data_cleaned)
             return data_cleaned
-        elif choice == '3':
-            print("Alright! Let's move on.")
-            return data
         else:
-            print("Oops! That's an invalid choice. Please enter a number from 1 to 3.")
-
-    
+            print("Oops! That's an invalid choice. Please enter a number from 1 to 2.")
+        
 def check_missing_values(data):
     if data.isna().sum().sum() > 0:
         print("It looks like there are missing values in your data.")
+        print(data.isna().sum())
         while True:
             print("\nWhat would you like to do?")
             print("1. Handle missing values")
@@ -102,32 +97,43 @@ def check_missing_values(data):
                 print("Oops! That's an invalid choice. Please enter '1' or '2'.")
     else:
         print("Great news! There are no missing values in your data.")
-        return data
-    
-def calculate_summary_stats(data, column_name):
+        return data        
+
+def calculate_summary_stats(data, column_name=None):
+    if column_name is None:
+        print("Here are the columns in your data:")
+        print(data.columns)
+        column_name = input("Which column would you like to analyze? ").strip()
     if column_name not in data.columns:
         print(f"Hmm...I couldn't find the column '{column_name}' in your data.")
         return None
     column_data = data[column_name]
     if np.issubdtype(column_data.dtype, np.number):
-        column_data = column_data.fillna(0)
-        summary_stats = {
-            'mean': np.mean(column_data),
-            'median': np.median(column_data),
-            'standard deviation': np.std(column_data)
+        mean_value = np.mean(column_data.fillna(0))
+        mode_value = mode(column_data.fillna(0))
+        median_value = np.median(column_data.fillna(0))
+        max_value = np.max(column_data.fillna(0))
+        mode_count = column_data.value_counts().idxmax()
+        mode_count_freq = column_data.value_counts().max()
+        print(f"Summary statistics for column '{column_name}':")
+        print(f"Mean: {mean_value}")
+        print(f"Mode: {mode_value} (count: {mode_count_freq})")
+        print(f"Median: {median_value}")
+        print(f"Highest Value: {max_value}")
+        print(f"Most Frequent Value: {mode_count} (count: {mode_count_freq})")
+        return {
+            'mean': mean_value,
+            'mode': mode_value,
+            'median': median_value,
+            'highest_value': max_value,
+            'most_frequent_value': mode_count
         }
     else:
-        column_data = column_data.fillna(None)
-        mode_result = mode(column_data)
-        if np.isnan(mode_result.mode[0]):
-            mode_val = "NaN"
-        else:
-            mode_val = mode_result.mode[0]
-        summary_stats = {
-            'mode': mode_val
-        }
-
-    return summary_stats
+        summary_stats = column_data.value_counts().to_dict()
+        print(f"Summary statistics for column '{column_name}':")
+        for value, count in summary_stats.items():
+            print(f"Value: {value}, Count: {count}")
+        return summary_stats
 
 def ordinal_encode(data):
     print("Here are the columns in your data:")
@@ -142,40 +148,5 @@ def ordinal_encode(data):
     data_encoded = data.copy()
     data_encoded[column_name] = data_encoded[column_name].map(encoding_map)   
     print("Done! I've encoded the column for you.")
+    print(data_encoded)
     return data_encoded
-    
-def main():
-    print("Welcome! Let's get started.")
-    data = read_data()
-    if data is None:
-        print("Sorry, I couldn't proceed without the data. Exiting...")
-        return
-    while True:
-        print("\nWhat would you like to do next?")
-        print("1. Check for missing values")
-        print("2. Perform summary statistics for a column")
-        print("3. Encode a categorical column")
-        print("4. Exit")
-        choice = input("Enter the number of your choice: ").strip()
-        if choice == '1':
-            check_missing_values(data)
-        elif choice == '2':
-            print("Here are the columns in your data:")
-            print(data.columns)
-            column_name = input("Which column would you like to analyze? ").strip()
-            summary_stats = calculate_summary_stats(data, column_name)
-            if summary_stats:
-                print(f"Here are the summary statistics for column '{column_name}':")
-                for stat, value in summary_stats.items():
-                    print(f"{stat.capitalize()}: {value}")
-        elif choice == '3':
-            data = ordinal_encode(data)
-        elif choice == '4':
-            print("Exiting... Goodbye!")
-            break
-        else:
-            print("Oops! That's an invalid choice. Please enter a number from 1 to 4.")
-
-
-if __name__ == "__main__":
-    main()
