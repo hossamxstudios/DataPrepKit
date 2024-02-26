@@ -1,38 +1,39 @@
-# DataPrepKit
+# XDataPrepKitX
 
-DataPrepKit is a Python package designed to simplify the preprocessing of datasets, providing a comprehensive toolkit for data cleaning, summarization, and transformation.
+# Description
+XDataPrepKitX is a Python package designed to streamline the data preparation process by providing various functions for data cleaning, handling missing values, and calculating summary statistics. It simplifies data preprocessing tasks, making it easier for data scientists and analysts to prepare their datasets for analysis and modeling.
 
-## Key Features
-- **Data Reading**: Easily read data from various file formats such as CSV, Excel, and JSON.
-- **Missing Value Handling**: Effortlessly handle missing values by removing or imputing them using customizable strategies.
-- **Summary Statistics**: Calculate essential statistical summaries for your data, including mean, median, and mode.
-- **Categorical Data Encoding**: Encode categorical data into numerical formats for analysis.
-- **Package Deployment**: Follow PyPI guidelines for seamless deployment and accessibility.
+# Key Features
+- Read data from CSV, Excel, or JSON files with a simple interface.
+- Check for missing values and provide options to handle them, including removal or imputation.
+- Calculate summary statistics for numeric columns, such as mean, mode, median, highest value, and most frequent value.
+- Encode categorical columns into ordinal values for machine learning tasks.
+- Easy-to-use functions with clear prompts and error handling for improved user experience.
 
+# Installation
+### You can install XDataPrepKitX using pip:
+@pip install XDataPrepKitX
 
 # Usage
+import XDataPrepKitX as dpkx
 
-To use DataPrepKit, follow these steps:
-1. **Read Data from a File:**
-    - Run the `read_data()` function, which prompts you to enter the file path of your data. The function automatically detects the file format and reads the data accordingly.
+# Example:
+## Read data from a CSV file
+data = dpkx.read_data()
+--- the user will be asked to enter file path
 
-2. **Check for Missing Values:**
-    - After reading the data, you can check for missing values by running the `check_missing_values(data)` function. This function gives you options to handle missing values, including removing rows or imputing missing values.
+## Check for missing values and handle them
+cleaned_data = dpkx.check_missing_values(data)
 
-3. **Perform Summary Statistics:**
-    - To calculate summary statistics for a specific column, use the `calculate_summary_stats(data, column_name)` function. Enter the name of the column you want to analyze, and the function will return statistics such as mean, median, and mode.
+## Calculate summary statistics for a specific column
+summary_stats = dpkx.calculate_summary_stats(data)
+-- the user will be asked to choose a column from the table
 
-4. **Encode Categorical Columns:**
-    - If you have categorical columns that need to be encoded, run the `ordinal_encode(data)` function. This function prompts you to choose a column and encodes its categories into numerical values.
+## Encode categorical column into ordinal values
+encoded_data = dpkx.ordinal_encode(data)
 
-5. **Repeat or Exit:**
-    - After performing any of the above steps, you can choose to repeat the process for another task or exit the program by entering the corresponding number.
+# Contributors
+Hossam Farid - @hossamxstudios
 
-## Installation
-
-You can install DataPrepKit via pip:
-
-```bash
-pip install dataprepkit
-
-
+# License
+This project is licensed under the MIT License - see the LICENSE file for details.
